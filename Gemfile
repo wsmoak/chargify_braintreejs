@@ -39,4 +39,4 @@ gem 'spring',        group: :development
 # gem 'debugger', group: [:development, :test]
 
 gem 'braintree'
-gem 'chargify'
+gem 'chargify_api_ares'
