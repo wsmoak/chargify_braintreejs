@@ -1,0 +1,26 @@
+<%= form_tag do %>
+  <div id="payment-form"></div>
+  <p>
+    <%= label_tag(:first_name, "First Name:") %>
+    <%= text_field_tag(:first_name) %>
+  </p>
+  <p>
+    <%= label_tag(:last_name, "Last Name:") %>
+    <%= text_field_tag(:last_name) %>
+  </p>
+  <p>
+    <%= label_tag(:email, "Email Address:") %>
+    <%= text_field_tag(:email) %>
+  </p>
+  <%= submit_tag("Subscribe for $25/month") %>
+<% end %>
+
+<script src="https://js.braintreegateway.com/js/braintree-2.23.0.min.js"></script>
+
+<script>
+  braintree.setup(
+    "<%= @token %>",
+    "dropin", {
+      container: "payment-form"
+    });
+</script>
