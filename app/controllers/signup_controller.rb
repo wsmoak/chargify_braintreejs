@@ -37,23 +37,45 @@ class SignupController < ApplicationController
       c.subdomain = ENV["CHARGIFY_BRAINTREE_SUBDOMAIN"]
     end
 
-    subscription = Chargify::Subscription.create(
-      :product_handle => 'basic',
-      :customer_attributes => {
-        :first_name => first_name,
-        :last_name => last_name,
-        :email => email
-      },
-      :credit_card_attributes => {
-        :first_name => first_name,
-        :last_name => last_name,
-        :vault_token => result.customer.id,
-        :card_type => result.customer.credit_cards[0].card_type.downcase,
-        :expiration_month => result.customer.credit_cards[0].expiration_month,
-        :expiration_year => result.customer.credit_cards[0].expiration_year,
-        :current_vault => "braintree_blue"
-      }
-    )
+    if result.customer.credit_cards.any?
+      subscription = Chargify::Subscription.create(
+        :product_handle => 'basic',
+        :customer_attributes => {
+          :first_name => first_name,
+          :last_name => last_name,
+          :email => email
+        },
+        :credit_card_attributes => {
+          :first_name => first_name,
+          :last_name => last_name,
+          :vault_token => result.customer.id,
+          :card_type => result.customer.credit_cards[0].card_type.downcase,
+          :expiration_month => result.customer.credit_cards[0].expiration_month,
+          :expiration_year => result.customer.credit_cards[0].expiration_year,
+          :last_four => result.customer.credit_cards[0].last_4,
+          :current_vault => "braintree_blue"
+        }
+      )
+    elsif result.customer.paypal_accounts.any?
+      subscription = Chargify::Subscription.create(
+        :product_handle => 'basic',
+        :customer_attributes => {
+          :first_name => first_name,
+          :last_name => last_name,
+          :email => email
+        },
+        :paypal_account_attributes => {
+          :first_name => first_name,
+          :last_name => last_name,
+          :vault_token => result.customer.id,
+          :paypal_email => email,
+          :payment_method_nonce => "required_for_paypal_account_but_not_used_because_we_have_a_vault_token",
+          :current_vault => "braintree_blue"
+        }
+      )
+    else
+      raise "Subscription not created because Braintree Result did not have a credit card or a PayPal account"
+    end
 
     puts "****** CHARGIFY SUBSCRIPTION ******"
     puts subscription.inspect
@@ -61,6 +83,5 @@ class SignupController < ApplicationController
     if subscription.errors.any?
       raise subscription.errors.full_messages.join(", ")
     end
-
   end
 end
