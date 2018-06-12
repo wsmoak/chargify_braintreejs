@@ -1,4 +1,4 @@
-<%= form_tag do %>
+<%= form_tag({}, id: 'my-form-id') do %>
   <div id="payment-form"></div>
   <p>
     <%= label_tag(:first_name, "First Name:") %>
@@ -12,6 +12,7 @@
     <%= label_tag(:email, "Email Address:") %>
     <%= text_field_tag(:email) %>
   </p>
+  <input type="hidden" name="device_data" />
   <%= submit_tag("Subscribe for $25/month") %>
 <% end %>
 
@@ -20,7 +21,17 @@
 <script>
   braintree.setup(
     "<%= @token %>",
-    "dropin", {
-      container: "payment-form"
-    });
+    'dropin',
+    {
+      container: "payment-form",
+      dataCollector: {
+        kount: { environment: 'sandbox' }
+      },
+      onReady: function (braintreeInstance) {
+        var form = document.getElementById('my-form-id');
+        var deviceDataInput = form['device_data'];
+        deviceDataInput.value = braintreeInstance.deviceData;
+    }
+  });
+
 </script>

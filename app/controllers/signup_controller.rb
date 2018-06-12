@@ -15,12 +15,17 @@ class SignupController < ApplicationController
     email = params[:email]
 
     nonce = params[:payment_method_nonce]
+    device_data = params[:device_data]
+
+    puts "nonce is #{nonce}"
+    puts "device_data is #{device_data}"
 
     result = Braintree::Customer.create(
       :first_name => first_name,
       :last_name => last_name,
       :email => email,
-      :payment_method_nonce => nonce
+      :payment_method_nonce => nonce,
+      :device_data => device_data
     )
 
     puts "******* BRAINTREE RESULT ********"
@@ -34,7 +39,7 @@ class SignupController < ApplicationController
 
     Chargify.configure do |c|
       c.api_key   = ENV["CHARGIFY_API_KEY"]
-      c.subdomain = ENV["CHARGIFY_BRAINTREE_SUBDOMAIN"]
+      c.subdomain = ENV["CHARGIFY_SUBDOMAIN"]
     end
 
     if result.customer.credit_cards.any?
