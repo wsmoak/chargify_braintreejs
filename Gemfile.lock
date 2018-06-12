@@ -32,9 +32,9 @@ GEM
       thread_safe (~> 0.1)
       tzinfo (~> 1.1)
     arel (5.0.1.20140414130214)
-    braintree (2.48.1)
+    braintree (2.89.0)
       builder (>= 2.0.0)
-    builder (3.2.2)
+    builder (3.2.3)
     chargify_api_ares (1.4.1)
       activeresource (>= 3.2.16)
     coffee-rails (4.0.1)
@@ -133,4 +133,4 @@ DEPENDENCIES
   uglifier (>= 1.3.0)
 
 BUNDLED WITH
-   1.10.6
+   1.16.0
